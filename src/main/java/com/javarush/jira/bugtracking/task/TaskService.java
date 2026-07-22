@@ -39,6 +39,7 @@ public class TaskService {
     private final SprintRepository sprintRepository;
     private final TaskExtMapper extMapper;
     private final UserBelongRepository userBelongRepository;
+    private final TaskRepository taskRepository;
 
     @Transactional
     public void changeStatus(long taskId, String statusCode) {
@@ -139,5 +140,13 @@ public class TaskService {
         if (!userType.equals(possibleUserType)) {
             throw new DataConflictException(String.format(assign ? CANNOT_ASSIGN : CANNOT_UN_ASSIGN, userType, task.getStatusCode()));
         }
+    }
+
+    @Transactional
+    public void addTagToTask(long taskID, String tag) {
+        Task task = taskRepository.findById(taskID)
+                .orElseThrow(() -> new NotFoundException("Task with id=" + taskID + " not found"));
+        task.getTags().add(tag);
+        taskRepository.save(task);
     }
 }
