@@ -13,17 +13,17 @@ public class ProfileTestData {
     public static MatcherFactory.Matcher<Profile> PROFILE_MATCHER =
             MatcherFactory.usingIgnoringFieldsComparator(Profile.class, "user");
 
-    public static ProfileTo USER_PROFILE_TO = new ProfileTo(null,
+    public static ProfileTo USER_PROFILE_TO = new ProfileTo(1L,
             Set.of("assigned", "overdue", "deadline"),
             Set.of(new ContactTo("skype", "userSkype"),
                     new ContactTo("mobile", "+01234567890"),
                     new ContactTo("website", "user.com")));
-    public static ProfileTo GUEST_PROFILE_EMPTY_TO = new ProfileTo(null,
+    public static ProfileTo GUEST_PROFILE_EMPTY_TO = new ProfileTo(1L,
             Set.of(),
             Set.of());
 
     public static ProfileTo getNewTo() {
-        return new ProfileTo(null,
+        return new ProfileTo(1L,
                 Set.of("three_days_before_deadline", "two_days_before_deadline", "one_day_before_deadline"),
                 Set.of(new ContactTo("tg", "guestTg")));
     }
@@ -37,7 +37,7 @@ public class ProfileTestData {
     }
 
     public static ProfileTo getUpdatedTo() {
-        return new ProfileTo(null,
+        return new ProfileTo(1L,
                 Set.of("assigned", "three_days_before_deadline", "two_days_before_deadline", "one_day_before_deadline", "deadline", "overdue"),
                 Set.of(new ContactTo("skype", "newSkype"),
                         new ContactTo("mobile", "+380987654321"),
@@ -61,25 +61,25 @@ public class ProfileTestData {
     }
 
     public static ProfileTo getInvalidTo() {
-        return new ProfileTo(null,
+        return new ProfileTo(1L,
                 Set.of(""),
                 Set.of(new ContactTo("skype", "")));
     }
 
     public static ProfileTo getWithUnknownNotificationTo() {
-        return new ProfileTo(null,
+        return new ProfileTo(1L,
                 Set.of("WrongNotification"),
                 Collections.emptySet());
     }
 
     public static ProfileTo getWithUnknownContactTo() {
-        return new ProfileTo(null,
+        return new ProfileTo(1L,
                 Collections.emptySet(),
                 Set.of(new ContactTo("WrongContactCode", "contact")));
     }
 
     public static ProfileTo getWithContactHtmlUnsafeTo() {
-        return new ProfileTo(null,
+        return new ProfileTo(1L,
                 Collections.emptySet(),
                 Set.of(new ContactTo("tg", "<script>alert(123)</script>")));
     }

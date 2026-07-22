@@ -26,7 +26,7 @@ public class TestDataSourceConfig {
     public DataSource h2DataSource(){
         DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
         driverManagerDataSource.setDriverClassName("org.h2.Driver");
-        driverManagerDataSource.setUrl("jdbc:h2:mem:testdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1");
+        driverManagerDataSource.setUrl("jdbc:h2:mem:testdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;NON_KEYWORDS=VALUE");
         driverManagerDataSource.setUsername("sa");
         driverManagerDataSource.setPassword("");
         return driverManagerDataSource;
