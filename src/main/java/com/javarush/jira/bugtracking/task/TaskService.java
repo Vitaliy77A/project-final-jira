@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,7 +30,7 @@ import static com.javarush.jira.ref.ReferenceService.getRefTo;
 
 @Service
 @RequiredArgsConstructor
-public class TaskService {
+public class TaskService  {
     static final String CANNOT_ASSIGN = "Cannot assign as %s to task with status=%s";
     static final String CANNOT_UN_ASSIGN = "Cannot unassign as %s from task with status=%s";
 
@@ -149,4 +150,42 @@ public class TaskService {
         task.getTags().add(tag);
         taskRepository.save(task);
     }
+
+    @Transactional(readOnly = true)
+    public Duration calculateTimeInProgress(Task task) {
+        return calculateDurationBetweenStatuses(task, "in_progress", "ready_for_review");
+    }
+
+    @Transactional(readOnly = true)
+    public Duration calculateTimeInTesting(Task task) {
+        return calculateDurationBetweenStatuses(task, "ready_for_review", "done");
+    }
+
+    private Duration calculateDurationBetweenStatuses(Task task, String startStatus, String endStatus) {
+        List<Activity> activities = activityHandler.getRepository().findAllByTaskIdOrderByUpdatedDesc(task.getId());
+        if (activities == null || activities.isEmpty()) {
+            return Duration.ZERO;
+        }
+
+        LocalDateTime startTime = null;
+        LocalDateTime endTime = null;
+
+        for (Activity activity : activities) {
+            if (startTime == null && startStatus.equals(activity.getStatusCode())) {
+                startTime = activity.getUpdated();
+            }
+            if (endTime == null && endStatus.equals(activity.getStatusCode())) {
+                endTime = activity.getUpdated();
+            }
+        }
+
+        if (startTime != null && endTime != null) {
+            return Duration.between(startTime, endTime);
+        }
+
+        return Duration.ZERO;
+    }
 }
+
+
+

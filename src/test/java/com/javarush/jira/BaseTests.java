@@ -8,5 +8,5 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 @Import(TestDataSourceConfig.class)
 @ActiveProfiles("test")
-abstract class BaseTests {
+public abstract class BaseTests {
 }
