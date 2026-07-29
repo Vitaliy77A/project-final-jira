@@ -325,3 +325,9 @@ values (6, 1, '2023-05-15 09:05:10', null, 'Data', null, 3, 'epic', 'in_progress
        (5, 118, '2023-05-16 11:10:10', null, 'UI tab of tasks', null, null, null, null, 'high'),
        (11, 118, '2023-05-16 12:30:10', null, 'UI tab of tasks', null, 2, null, null, null);
 
+-- changeset vitaliy:add_test_activities
+insert into ACTIVITY (ID, AUTHOR_ID, TASK_ID, UPDATED, STATUS_CODE)
+values (1001, 1, 1, '2026-07-20 10:00:00', 'in_progress'),
+       (1002, 1, 1, '2026-07-22 14:00:00', 'ready_for_review'),
+       (1003, 1, 1, '2026-07-24 16:30:00', 'done');
+
