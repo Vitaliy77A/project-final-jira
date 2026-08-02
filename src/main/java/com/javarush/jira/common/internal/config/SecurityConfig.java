@@ -1,6 +1,7 @@
 package com.javarush.jira.common.internal.config;
 
 import com.javarush.jira.login.AuthUser;
+import com.javarush.jira.login.JwtAuthenticationFilter;
 import com.javarush.jira.login.Role;
 import com.javarush.jira.login.internal.UserRepository;
 import com.javarush.jira.login.internal.sociallogin.CustomOAuth2UserService;
@@ -24,6 +25,7 @@ import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCo
 import org.springframework.security.oauth2.client.http.OAuth2ErrorResponseErrorHandler;
 import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
@@ -36,9 +38,9 @@ import java.util.Arrays;
 public class SecurityConfig {
     public static final PasswordEncoder PASSWORD_ENCODER = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
-    private final UserRepository userRepository;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+    private final JwtAuthenticationFilter jwtAuthFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -46,11 +48,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        return email -> {
-            log.debug("Authenticating '{}'", email);
-            return new AuthUser(userRepository.getExistedByEmail(email));
-        };
+    public org.springframework.security.authentication.AuthenticationManager authenticationManager(
+            org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
     }
 
     @Bean
@@ -59,12 +59,13 @@ public class SecurityConfig {
         http.securityMatcher("/api/**").authorizeHttpRequests()
                 .requestMatchers("/api/admin/**").hasRole(Role.ADMIN.name())
                 .requestMatchers("/api/mngr/**").hasAnyRole(Role.ADMIN.name(), Role.MANAGER.name())
-                .requestMatchers(HttpMethod.POST, "/api/users").anonymous()
+                .requestMatchers(HttpMethod.POST, "/api/users", "/api/auth/login").anonymous()
                 .requestMatchers("/api/**").authenticated()
                 .and().httpBasic()
                 .authenticationEntryPoint(restAuthenticationEntryPoint)
-                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER) // support sessions Cookie for UI ajax
-                .and().csrf().disable();
+                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // support sessions Cookie for UI ajax
+                .and().csrf().disable()
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -94,7 +95,10 @@ public class SecurityConfig {
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)
                 .deleteCookies("JSESSIONID")
-                .and().csrf().disable();
+                .and().csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
