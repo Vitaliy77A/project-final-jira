@@ -151,6 +151,12 @@ public class TaskController {
         activityService.delete(id);
     }
 
+    @PostMapping(value = "/{id}/tags")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void addTag(@PathVariable("id") long taskId, @NotBlank @RequestParam("tag") String tag) {
+        taskService.addTagToTask(taskId, tag);
+    }
+
     private record TaskTreeNode(TaskTo taskTo, List<TaskTreeNode> subNodes) implements ITreeNode<TaskTo, TaskTreeNode> {
         public TaskTreeNode(TaskTo taskTo) {
             this(taskTo, new LinkedList<>());

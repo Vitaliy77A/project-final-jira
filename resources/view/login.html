@@ -13,7 +13,7 @@
                                 Bad credentials
                             </p>
                         </div>
-                        <form action="/view/login" method="post">
+                        <form id="loginForm">
                             <div class="form-outline mb-4">
                                 <input class="form-control" name="username" placeholder="E-mail" required type="text"/>
                             </div>
@@ -30,6 +30,7 @@
                                 </div>
                             </div>
                         </form>
+
                         <div class="row mt-4">
                             <div class="col-5">
                                 <hr>
@@ -48,14 +49,6 @@
                            type="button">
                             <i class="fa-brands fa-google"></i>
                         </a>
-                        <a class="btn btn-primary btn-lg me-2" href="/oauth2/authorization/vk" style="padding-left: 17px; padding-right: 17px;"
-                           type="button">
-                            <i class="fa-brands fa-vk"></i>
-                        </a>
-                        <a class="btn btn-danger btn-lg me-2" href="/oauth2/authorization/yandex" style="padding-left: 21px; padding-right: 21px;"
-                           type="button">
-                            <i class="fa-brands fa-yandex"></i>
-                        </a>
                         <a class="btn btn-dark btn-lg me-2" href="/oauth2/authorization/github" type="button">
                             <i class="fa-brands fa-github"></i>
                         </a>
@@ -69,6 +62,40 @@
                 </div>
             </div>
         </div>
+
+        <!-- Скрипт для работы с JWT -->
+        <script>
+            document.getElementById('loginForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const emailValue = this.username.value;
+                const passwordValue = this.password.value;
+
+                try {
+                    const response = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+
+                        body: JSON.stringify({ email: emailValue, password: passwordValue })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        document.cookie = "jwtToken=" + data.token + "; path=/; max-age=86400; SameSite=Lax";
+                        localStorage.setItem('jwtToken', data.token);
+                        window.location.href = "/";
+                    } else {
+                        alert("Неверный логин или пароль");
+                    }
+                } catch (error) {
+                    console.error("Ошибка при отправке запроса:", error);
+                    alert("Произошла ошибка при подключении к серверу");
+                }
+            });
+        </script>
+
     </appMain>
 </th:block>
 

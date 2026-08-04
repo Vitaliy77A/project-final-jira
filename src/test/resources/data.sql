@@ -8,25 +8,25 @@ from PROFILE;
 
 delete
 from ACTIVITY;
-alter
-sequence ACTIVITY_ID_SEQ restart with 1;
+--alter
+--sequence ACTIVITY_ID_SEQ restart with 1;
 delete
 from TASK;
-alter
-sequence TASK_ID_SEQ restart with 1;
+--alter
+--sequence TASK_ID_SEQ restart with 1;
 delete
 from SPRINT;
-alter
-sequence SPRINT_ID_SEQ restart with 1;
+--alter
+--sequence SPRINT_ID_SEQ restart with 1;
 delete
 from PROJECT;
-alter
-sequence PROJECT_ID_SEQ restart with 1;
+--alter
+--sequence PROJECT_ID_SEQ restart with 1;
 
 delete
 from USERS;
-alter
-sequence USERS_ID_SEQ restart with 1;
+--alter
+--sequence USERS_ID_SEQ restart with 1;
 
 insert into USERS (EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, DISPLAY_NAME)
 values ('user@gmail.com', '{noop}password', 'userFirstName', 'userLastName', 'userDisplayName'),
@@ -53,8 +53,8 @@ values (1, 'skype', 'userSkype'),
        (1, 'mobile', '+01234567890'),
        (1, 'website', 'user.com'),
        (2, 'github', 'adminGitHub'),
-       (2, 'tg', 'adminTg'),
-       (2, 'vk', 'adminVk');
+       (2, 'tg', 'adminTg');
+
 
 
 insert into PROJECT (code, title, description, type_code, parent_id)
@@ -90,9 +90,13 @@ values (1, 1, '2023-05-15 09:05:10', null, 'Data', null, 3, 'epic', 'in_progress
 insert into USER_BELONG (OBJECT_ID, OBJECT_TYPE, USER_ID, USER_TYPE_CODE, STARTPOINT, ENDPOINT)
 values (1, 2, 2, 'task_developer', '2023-06-14 08:35:10', '2023-06-14 08:55:00'),
        (1, 2, 2, 'task_reviewer', '2023-06-14 09:35:10', null),
-       (1, 2, 1, 'task_developer', '2023-06-12 11:40:00', '2023-06-12 12:35:00'),
        (1, 2, 1, 'task_developer', '2023-06-13 12:35:00', null),
        (1, 2, 1, 'task_tester', '2023-06-14 15:20:00', null),
        (2, 2, 2, 'task_developer', '2023-06-08 07:10:00', null),
        (2, 2, 1, 'task_developer', '2023-06-09 14:48:00', null),
        (2, 2, 1, 'task_tester', '2023-06-10 16:37:00', null);
+
+insert into ACTIVITY (ID, AUTHOR_ID, TASK_ID, UPDATED, STATUS_CODE)
+values (1001, 1, 1, '2026-07-20 10:00:00', 'in_progress'),
+       (1002, 1, 1, '2026-07-20 14:00:00', 'ready_for_review'),
+       (1003, 1, 1, '2026-07-20 16:30:00', 'done');

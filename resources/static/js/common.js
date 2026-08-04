@@ -114,4 +114,13 @@ function failNoty(jqXHR) {
         layout: "bottomRight"
     });
     failedNote.show()
+
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('form[action*="logout"]').forEach(form => {
+            form.addEventListener('submit', function() {
+                document.cookie = "jwtToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                localStorage.removeItem('jwtToken');
+            });
+        });
+    });
 }
